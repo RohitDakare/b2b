@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #f5f5f4; /* Soft Warm Gray – 65% */
+  --color-primary: #7f5af0; /* Electric Purple – 15% */
+  --color-secondary: #2cb67d; /* Mint Green – 8% */
+  --color-accent: #ff8906; /* Neon Orange – 5% */
+  --color-text: #16161a; /* Charcoal Black – 6% */
+  --color-surface: #ffffff; /* Pure White – 1% */
+}
+
+body {
+  background-image: url('/trasnport.jpg');
+ /* background-image: url("https://www.freepik.com/free-vector/hand-drawn-traveller-collection_3679387.htm#fromView=keyword&page=1&position=10&uuid=5e188e48-6f20-494a-8af3-0064da51c723&query=Gen+Z+Travel");
+  /* Replace with your image path */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Enables parallax scroll */
+  background-repeat: no-repeat;
+  color: var(--color-text);
+  font-family: "Inter", sans-serif;
+}
+
+/* Optional overlay for better text contrast */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.3); /* for a glassy effect */
+
+  z-index: -1;
+  /* background-image: url(travelling.jpg); */
+}
+/* Add this to darken overlay slightly for better visibility */
+/* body::before {
+  background: rgba(255, 255, 255, 0.85);
+} */
