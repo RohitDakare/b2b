@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { realFlightService } from '../services/realFlightService';
 
 const BookingPage = () => {
   const { state } = useLocation();
@@ -19,6 +20,9 @@ const BookingPage = () => {
       cardholderName: ''
     }
   });
+  const [realFlight, setRealFlight] = useState(null);
+  const [realFlightLoading, setRealFlightLoading] = useState(false);
+  const [realFlightError, setRealFlightError] = useState('');
 
   const flight = state?.flight;
   const searchParams = state?.searchParams;
@@ -38,6 +42,16 @@ const BookingPage = () => {
       setPassengers(initialPassengers);
     }
   }, [searchParams]);
+
+  React.useEffect(() => {
+    if (flight && flight.flight && flight.flight.iata) {
+      setRealFlightLoading(true);
+      realFlightService.getFlightById(flight.flight.iata)
+        .then(data => setRealFlight(data))
+        .catch(err => setRealFlightError('Could not fetch real flight data.'))
+        .finally(() => setRealFlightLoading(false));
+    }
+  }, [flight]);
 
   const handlePassengerChange = (index, field, value) => {
     const updatedPassengers = [...passengers];
@@ -60,7 +74,7 @@ const BookingPage = () => {
   };
 
   const calculateTotalPrice = () => {
-    const basePrice = flight?.price?.amount || 0;
+    const basePrice = (realFlight?.price?.amount || flight?.price?.amount || 0);
     const totalPrice = basePrice * (searchParams?.travellers || 1);
     const taxes = totalPrice * 0.18; // 18% GST
     return {
@@ -133,6 +147,13 @@ const BookingPage = () => {
         </div>
       </div>
     );
+  }
+
+  if (realFlightLoading) {
+    return <div className="min-h-screen flex items-center justify-center">Loading real flight data...</div>;
+  }
+  if (realFlightError) {
+    return <div className="min-h-screen flex items-center justify-center text-red-500">{realFlightError}</div>;
   }
 
   const pricing = calculateTotalPrice();

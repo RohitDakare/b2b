@@ -1,5 +1,7 @@
+import axios from 'axios';
+
 // Flight API Service
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://b2b-rosy.vercel.app/api';
 
 // Mock flight data for fallback when API is unavailable
 const mockFlights = [
@@ -67,13 +69,21 @@ export const flightApi = {
         params.append('return', returnDate);
       }
 
-      const response = await fetch(`${API_BASE_URL}/flights/flights?${params}`);
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Use axios for better error/timeout handling
+      let data;
+      try {
+        const response = await axios.get(`${API_BASE_URL}/flights/flights?${params}`, {
+          timeout: 7000, // 7 seconds timeout for latency handling
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        });
+        data = response.data;
+      } catch (err) {
+        console.error('Real-time API error or timeout:', err.message);
+        data = null;
       }
-
-      const data = await response.json();
       
       // If API returns empty data, use mock data
       if (!data || data.length === 0) {
@@ -142,4 +152,4 @@ export const flightApi = {
   generateOnTimeRate() {
     return Math.floor(Math.random() * 21) + 80; // 80-100%
   }
-}; 
+};
